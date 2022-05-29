@@ -1,0 +1,35 @@
+{{#vatRequestErrors.length}}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Telegram Chat Id</th>
+            <th>VAT Number</th>
+            <th>Error</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#vatRequestErrors}}
+        <tr>
+            <td><input class="form-control-plaintext" type="text" value="{{vatRequest.telegramChatId}}" readonly></td>
+            <td><input class="form-control-plaintext" type="text" value="{{vatRequest.countryCode}}{{vatRequest.vatNumber}}" readonly></td>
+            <td><input class="form-control-plaintext" type="text" value="{{error}}" readonly></td>
+            <td>
+                <button
+                    class="btn btn-primary"
+                    hx-post="/resolve-error?telegramChatId={{vatRequest.telegramChatId}}&vatNumber={{vatRequest.countryCode}}{{vatRequest.vatNumber}}"
+                    _="on click toggle @disabled"
+                >
+                    Resolve
+                </button>
+            </td>
+        </tr>
+        {{/vatRequestErrors}}
+    </tbody>
+</table>
+{{/vatRequestErrors.length}}
+
+{{^vatRequestErrors}}
+<span class="text-muted">No VAT Request Errors</span>
+{{/vatRequestErrors}}
