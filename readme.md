@@ -18,4 +18,4 @@ It can display two lists:
    ```
 2. You have two choices:
    - 2.1. Have [Node.js](https://nodejs.dev) and [typescript](https://www.npmjs.com/package/typescript) installed locally, then run `npm install` in terminal, then run `npm start` in terminal.
-   - 2.2. Have [Docker](https://www.docker.com) installed locally, then run `docker-compose up` in terminal.
+   - 2.2. Have [Docker](https://www.docker.com) installed locally, then run `docker-compose up` in terminal. If you make any changes to the source code, run `docker-compose up --build` to rebuild the image.
