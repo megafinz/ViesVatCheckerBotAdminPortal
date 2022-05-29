@@ -1,5 +1,5 @@
 {{#vatRequestErrors.length}}
-<table class="table">
+<table class="table" _="on load remove @hidden from #button-resolve-all-errors">
     <thead>
         <tr>
             <th>Telegram Chat Id</th>
@@ -34,5 +34,7 @@
 {{/vatRequestErrors.length}}
 
 {{^vatRequestErrors}}
-<span class="text-muted">No VAT Request Errors</span>
+<div _="on load add @hidden to #button-resolve-all-errors">
+    <span class="text-muted">No VAT Request Errors</span>
+</div>
 {{/vatRequestErrors}}

@@ -61,13 +61,22 @@ app.post("/resolve-error", async (req, res) => {
     }
 });
 
+app.post("/resolve-all-errors", async (_, res) => {
+    await apiCall(async () => {
+        await axios.post(getApiUrl("resolveAllErrors"));
+        res.status(204).send();
+        console.log("Successfully resolved all VAT Request Errors");
+    }, res, "Failed to resolve all VAT Request Errors");
+});
+
 const port = PORT || 80;
 
 app.listen(port, () => {
-    console.log(`Started server listening on port ${port}.`);
+    console.log(`Started server listening on port ${port}`);
+    console.log(`Admin API location: ${ADMIN_API_URL}`);
 });
 
-function getApiUrl(action: "list" | "listErrors" | "resolveError") {
+function getApiUrl(action: "list" | "listErrors" | "resolveError" | "resolveAllErrors") {
     return `${ADMIN_API_URL}/${action}?code=${ADMIN_API_AUTH_CODE}`;
 }
 
@@ -75,7 +84,7 @@ async function apiCall(fn: () => Promise<void>, res: Response<any>, errorMessage
     try {
         await fn();
     } catch (error: any) {
-        console.error(`${errorMessage}\n`, error.message || error);
+        console.error(`${errorMessage}\n`, error.message || error, error.response?.data);
         res.status(error.response?.status || 500).send(errorMessage);
     }
 }

@@ -28,6 +28,7 @@
                     <div class="card-header">
                         <h2 class="py-2">VAT Requests</h2>
                     </div>
+
                     <div class="card-body">
                         <img src="/assets/images/tail-spin.svg" class="htmx-indicator loader" />
                         <div id="vat-request-list"></div>
@@ -47,8 +48,25 @@
                     _="on htmx:responseError[detail.elt==me] remove @hidden from #error-loading-vat-request-errors
                        on htmx:afterRequest call initializeTooltips(me)">
                     <div class="card-header">
-                        <h2 class="py-2">VAT Request Errors</h2>
+                        <div class="d-flex py-2">
+                            <h2 class="me-auto">VAT Request Errors</h2>
+
+                            <!-- Resolve All -->
+                            <button
+                                id="button-resolve-all-errors"
+                                hx-post="/resolve-all-errors"
+                                class="btn btn-primary"
+                                hidden
+                                _="on click toggle @disabled until htmx:afterOnLoad end
+                                   on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
+                                      then trigger showMessage(value:'Successfully resolved all VAT Request Errors') end
+                                   on htmx:responseError trigger showError(value:'Failed to resolve all VAT Request Errors, please check logs for details') end"
+                            >
+                                Resolve All
+                            </button>
+                        </div>
                     </div>
+
                     <div class="card-body">
                         <img src="/assets/images/tail-spin.svg" class="htmx-indicator loader" />
                         <div id="vat-request-error-list"></div>
