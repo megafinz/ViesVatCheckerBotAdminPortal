@@ -16,7 +16,6 @@ It can display two lists:
    ADMIN_API_URL=%URL_OF_YOUR_ADMIN_API_FUNCTION%
    ADMIN_API_AUTH_CODE=%AUTH_CODE_OF_YOUR_ADMIN_API_FUNCTION%
    ```
-2. Type `npm install` in terminal.
-3. Type `npm start` in terminal.
-
-This app is not intended to be distributed as it lacks any authentication/authorization checks (although you'll need an auth code to call your bot's admin API).
+2. You have two choices:
+   - 2.1. Have [Node.js](https://nodejs.dev) and [typescript](https://www.npmjs.com/package/typescript) installed locally, then run `npm install` in terminal, then run `npm start` in terminal.
+   - 2.2. Have [Docker](https://www.docker.com) installed locally, then run `docker-compose up` in terminal.

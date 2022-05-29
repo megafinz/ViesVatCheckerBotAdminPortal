@@ -16,7 +16,7 @@ app.use(express.static(root));
 
 app.engine("mst", mustache());
 app.set("view engine", "mst");
-app.set("views", path.join(__dirname, "templates"));
+app.set("views", path.join(__dirname, "www", "templates"));
 
 app.get("/vat-requests", async (_, res) => {
     const result = await axios.get(getApiUrl("list"));
@@ -52,8 +52,10 @@ app.post("/resolve-error", async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Started server listening on port ${PORT}.`);
+const port = PORT || 80;
+
+app.listen(port, () => {
+    console.log(`Started server listening on port ${port}.`);
 });
 
 function getApiUrl(action: "list" | "listErrors" | "resolveError") {
