@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { Response } from "express";
 import path from "path";
 import axios from "axios";
 import mustache from "mustache-express";
@@ -19,19 +19,25 @@ app.set("view engine", "mst");
 app.set("views", path.join(__dirname, "www", "templates"));
 
 app.get("/vat-requests", async (_, res) => {
-    const result = await axios.get(getApiUrl("list"));
-    const vatRequests = <VatRequest[]>result.data;
-    res.render("vat-requests", {
-        vatRequests: vatRequests
-    });
+    await apiCall(async () => {
+        const result = await axios.get(getApiUrl("list"));
+        const vatRequests = <VatRequest[]>result.data;
+        res.render("vat-requests", {
+            vatRequests: vatRequests
+        });
+        console.log("Successfully retrieved VAT Requests");
+    }, res, "Failed to retrieve VAT Requests");
 });
 
 app.get("/vat-request-errors", async (_, res) => {
-    const result = await axios.get(getApiUrl("listErrors"));
-    const vatRequestErrors = <VatRequestError[]>result.data;
-    res.render("vat-request-errors", {
-        vatRequestErrors: vatRequestErrors
-    });
+    await apiCall(async () => {
+        const result = await axios.get(getApiUrl("listErrors"));
+        const vatRequestErrors = <VatRequestError[]>result.data;
+        res.render("vat-request-errors", {
+            vatRequestErrors: vatRequestErrors
+        });
+        console.log("Successfully retrieved VAT Request Errors");
+    }, res, "Failed to retrieve VAT Request Errors");
 });
 
 app.post("/resolve-error", async (req, res) => {
@@ -39,16 +45,19 @@ app.post("/resolve-error", async (req, res) => {
     const vatNumber = req.query.vatNumber || req.body?.vatNumber;
     if (!telegramChatId) {
         res.status(400).send("Missing Telegram Chat Id");
+        console.warn("Invalid request: missing Telegram Chat Id");
     } else if (!vatNumber) {
         res.status(400).send("Missing VAT Number");
+        console.log("Invalid request: missing VAT Number");
     } else {
-        await axios.post(getApiUrl("resolveError"), {
-            telegramChatId: telegramChatId,
-            vatNumber: vatNumber
-        });
-        res.status(204);
-        res.header("HX-Refresh", "true");
-        res.send();
+        await apiCall(async () => {
+            await axios.post(getApiUrl("resolveError"), {
+                telegramChatId: telegramChatId,
+                vatNumber: vatNumber
+            });
+            res.status(204).send();
+            console.log("Successfully resolved VAT Request Error");
+        }, res, "Failed to resolve VAT Request Error");
     }
 });
 
@@ -60,4 +69,13 @@ app.listen(port, () => {
 
 function getApiUrl(action: "list" | "listErrors" | "resolveError") {
     return `${ADMIN_API_URL}/${action}?code=${ADMIN_API_AUTH_CODE}`;
+}
+
+async function apiCall(fn: () => Promise<void>, res: Response<any>, errorMessage: string) {
+    try {
+        await fn();
+    } catch (error: any) {
+        console.error(`${errorMessage}\n`, error.message || error);
+        res.status(error.response?.status || 500).send(errorMessage);
+    }
 }

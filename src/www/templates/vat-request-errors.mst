@@ -14,12 +14,15 @@
         <tr>
             <td><input class="form-control-plaintext" type="text" value="{{vatRequest.telegramChatId}}" readonly></td>
             <td><input class="form-control-plaintext" type="text" value="{{vatRequest.countryCode}}{{vatRequest.vatNumber}}" readonly></td>
-            <td><input class="form-control-plaintext" type="text" value="{{error}}" readonly></td>
+            <td><input class="form-control-plaintext text-truncate" type="text" value="{{error}}" data-bs-toggle="tooltip" title="{{error}}" readonly></td>
             <td>
                 <button
                     class="btn btn-primary"
                     hx-post="/resolve-error?telegramChatId={{vatRequest.telegramChatId}}&vatNumber={{vatRequest.countryCode}}{{vatRequest.vatNumber}}"
-                    _="on click toggle @disabled"
+                    _="on click toggle @disabled until htmx:afterOnLoad end
+                       on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
+                          then trigger showMessage(value:'Successfully resolved VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}') end
+                       on htmx:responseError trigger showError(value:'Failed to resolve VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}, please check logs for details') end"
                 >
                     Resolve
                 </button>
