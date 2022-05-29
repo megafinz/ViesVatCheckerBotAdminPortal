@@ -16,6 +16,7 @@ It can display two lists:
    ADMIN_API_URL=%URL_OF_YOUR_ADMIN_API_FUNCTION%
    ADMIN_API_AUTH_CODE=%AUTH_CODE_OF_YOUR_ADMIN_API_FUNCTION%
    ```
-2. Type `npm start` in terminal.
+2. Type `npm install` in terminal.
+3. Type `npm start` in terminal.
 
 This app is not intended to be distributed as it lacks any authentication/authorization checks (although you'll need an auth code to call your bot's admin API).
