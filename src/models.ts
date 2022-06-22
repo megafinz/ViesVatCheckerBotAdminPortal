@@ -6,6 +6,7 @@ export interface VatRequest {
 }
 
 export interface VatRequestError {
+  id: string;
   vatRequest: VatRequest;
   error: string;
 }

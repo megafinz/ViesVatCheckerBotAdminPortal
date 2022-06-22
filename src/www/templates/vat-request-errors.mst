@@ -18,7 +18,7 @@
       <td>
         <button
           class="btn btn-primary"
-          hx-post="/resolve-error?telegramChatId={{vatRequest.telegramChatId}}&vatNumber={{vatRequest.countryCode}}{{vatRequest.vatNumber}}"
+          hx-post="/resolve-error?errorId={{id}}"
           _="on click toggle @disabled until htmx:afterOnLoad end
              on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
                 then trigger showMessage(value:'Successfully resolved VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}') end

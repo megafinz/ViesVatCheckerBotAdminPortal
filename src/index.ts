@@ -41,19 +41,14 @@ app.get('/vat-request-errors', async (_, res) => {
 });
 
 app.post('/resolve-error', async (req, res) => {
-  const telegramChatId = req.query.telegramChatId || req.body?.telegramChatId;
-  const vatNumber = req.query.vatNumber || req.body?.vatNumber;
-  if (!telegramChatId) {
-    res.status(400).send('Missing Telegram Chat Id');
-    console.warn('Invalid request: missing Telegram Chat Id');
-  } else if (!vatNumber) {
-    res.status(400).send('Missing VAT Number');
-    console.log('Invalid request: missing VAT Number');
+  const errorId = req.query.errorId || req.body?.errorId;
+  if (!errorId) {
+    res.status(400).send('Missing VAT Request Error Id');
+    console.warn('Invalid request: missing VAT Request Error Id');
   } else {
     await apiCall(async () => {
       await axios.post(getApiUrl('resolveError'), {
-        telegramChatId,
-        vatNumber
+        errorId
       });
       res.status(204).send();
       console.log('Successfully resolved VAT Request Error');
