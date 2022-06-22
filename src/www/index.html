@@ -49,8 +49,26 @@
              on htmx:afterRequest call initializeTooltips(me)"
         >
           <div class="card-header">
-            <div class="d-flex py-2">
+            <div class="d-flex align-items-center gap-3 py-2">
               <h2 class="me-auto">VAT Request Errors</h2>
+
+              <!-- Silent -->
+              <div
+                class="form-check"
+                data-bs-toggle="tooltip"
+                title="If checked, will not notify Telegram users that errors have been resolved"
+                hidden
+              >
+                <input
+                  id="checkbox-silent"
+                  name="checkbox-silent"
+                  class="form-check-input"
+                  type="checkbox"
+                >
+                <label for="checkbox-silent" class="form-check-label">
+                  Silent
+                </label>
+              </div>
 
               <!-- Resolve All -->
               <button

@@ -1,5 +1,5 @@
 {{#vatRequestErrors.length}}
-<table class="table" _="on load remove @hidden from #button-resolve-all-errors">
+<table class="table" _="on load remove @hidden from [ #button-resolve-all-errors, #checkbox-silent ]">
   <thead>
     <tr>
       <th>Telegram Chat Id</th>
@@ -19,6 +19,7 @@
         <button
           class="btn btn-primary"
           hx-post="/resolve-error?errorId={{id}}"
+          hx-include="[name='checkbox-silent']"
           _="on click toggle @disabled until htmx:afterOnLoad end
              on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
                 then trigger showMessage(value:'Successfully resolved VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}') end

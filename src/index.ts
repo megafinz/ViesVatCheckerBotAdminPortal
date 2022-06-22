@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import express, { Response } from 'express';
+import bodyParser from 'body-parser';
 import path from 'path';
 import axios from 'axios';
 import mustache from 'mustache-express';
@@ -13,6 +14,7 @@ const root = path.join(__dirname, 'www');
 const app = express();
 
 app.use(express.static(root));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.engine('mst', mustache());
 app.set('view engine', 'mst');
@@ -42,13 +44,15 @@ app.get('/vat-request-errors', async (_, res) => {
 
 app.post('/resolve-error', async (req, res) => {
   const errorId = req.query.errorId || req.body?.errorId;
+  const silent = req?.body['checkbox-silent'] === 'on';
   if (!errorId) {
     res.status(400).send('Missing VAT Request Error Id');
     console.warn('Invalid request: missing VAT Request Error Id');
   } else {
     await apiCall(async () => {
       await axios.post(getApiUrl('resolveError'), {
-        errorId
+        errorId,
+        silent
       });
       res.status(204).send();
       console.log('Successfully resolved VAT Request Error');
