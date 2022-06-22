@@ -1,20 +1,20 @@
 {{#vatRequests.length}}
 <table class="table">
-    <thead>
-        <tr>
-            <th>Telegram Chat Id</th>
-            <th>VAT Number</th>
-        </tr>
-    </thead>
+  <thead>
+    <tr>
+      <th>Telegram Chat Id</th>
+      <th>VAT Number</th>
+    </tr>
+  </thead>
 
-    <tbody>
-        {{#vatRequests}}
-        <tr>
-            <td><input class="form-control-plaintext" type="text" value="{{telegramChatId}}" readonly></td>
-            <td><input class="form-control-plaintext" type="text" value="{{countryCode}}{{vatNumber}}" readonly></td>
-        </tr>
-        {{/vatRequests}}
-    </tbody>
+  <tbody>
+    {{#vatRequests}}
+    <tr>
+      <td><input class="form-control-plaintext" type="text" value="{{telegramChatId}}" readonly></td>
+      <td><input class="form-control-plaintext" type="text" value="{{countryCode}}{{vatNumber}}" readonly></td>
+    </tr>
+    {{/vatRequests}}
+  </tbody>
 </table>
 {{/vatRequests.length}}
 

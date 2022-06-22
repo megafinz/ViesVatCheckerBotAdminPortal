@@ -1,11 +1,11 @@
 .loader {
-    display: none;
+  display: none;
 }
 
 .htmx-request.loader {
-    display: inline;
+  display: inline;
 }
 
 .htmx-request .loader {
-    display: inline;
+  display: inline;
 }
