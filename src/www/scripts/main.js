@@ -16,13 +16,13 @@ function initializeToast() {
 
   const toast = new bootstrap.Toast(toastElement, { delay: 10000 });
 
-  htmx.on('showMessage', (e) => {
+  htmx.on('showMessage', e => {
     toastHeader.innerText = '🟢 Success';
     toastBody.innerText = e.detail.value;
     toast.show();
   });
 
-  htmx.on('showError', (e) => {
+  htmx.on('showError', e => {
     toastHeader.innerText = '🔴 Error';
     toastHeader.classList.add('text-danger');
     toastBody.innerText = e.detail.value;

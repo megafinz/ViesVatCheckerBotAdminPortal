@@ -14,6 +14,36 @@
 
 <body>
   <div class="container py-5">
+    <div class="row mb-3">
+      <div class="d-flex flex-row">
+        <!-- Add New VAT Request -->
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#modal-add-new-vat-request"
+        >
+          + VAT Request
+        </button>
+
+        <!-- Silent -->
+        <div
+          class="form-check ms-auto"
+          data-bs-toggle="tooltip"
+          title="If checked, will not notify Telegram users about changes to their VAT Requests"
+        >
+          <input
+            id="checkbox-silent"
+            name="checkbox-silent"
+            class="form-check-input"
+            type="checkbox"
+          >
+          <label for="checkbox-silent" class="form-check-label">
+            Silent
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <!-- VAT Requests -->
       <div class="col">
@@ -49,26 +79,8 @@
              on htmx:afterRequest call initializeTooltips(me)"
         >
           <div class="card-header">
-            <div class="d-flex align-items-center gap-3 py-2">
+            <div class="d-flex align-items-center py-2">
               <h2 class="me-auto">VAT Request Errors</h2>
-
-              <!-- Silent -->
-              <div
-                class="form-check"
-                data-bs-toggle="tooltip"
-                title="If checked, will not notify Telegram users that errors have been resolved"
-                hidden
-              >
-                <input
-                  id="checkbox-silent"
-                  name="checkbox-silent"
-                  class="form-check-input"
-                  type="checkbox"
-                >
-                <label for="checkbox-silent" class="form-check-label">
-                  Silent
-                </label>
-              </div>
 
               <!-- Resolve All -->
               <button
@@ -78,7 +90,7 @@
                 _="on click toggle @disabled until htmx:afterOnLoad end
                    on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
                       then trigger showMessage(value:'Successfully resolved all VAT Request Errors') end
-                   on htmx:responseError trigger showError(value:'Failed to resolve all VAT Request Errors, please check logs for details') end"
+                   on htmx:responseError trigger showError(value:'Failed to resolve all VAT Request Errors:\n\n' + detail.xhr.response) end"
               >
                 Resolve All
               </button>
@@ -95,8 +107,81 @@
     </div>
   </div>
 
+  <!-- Modal: Add New VAT Request -->
+  <div id="modal-add-new-vat-request" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New VAT Request</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <form
+          hx-post="/check"
+          hx-swap="none"
+          _="on htmx:beforeRequest toggle @disabled on [ #button-close-new-vat-request-modal, #button-add-new-vat-request ]
+             on htmx:afterOnLoad[detail.successful==true]
+                toggle @disabled on [ #button-close-new-vat-request-modal, #button-add-new-vat-request ] then
+                send click to #button-close-new-vat-request-modal then
+                trigger showMessage(value: 'Successfully registered new VAT request') then
+                trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
+             on htmx:responseError
+                toggle @disabled on [ #button-close-new-vat-request-modal, #button-add-new-vat-request ] then
+                trigger showError(value: 'Failed to register new VAT request:\n\n' + detail.xhr.response)"
+        >
+          <div class="modal-body">
+            <!-- Telegram Chat ID -->
+            <div class="mb-3">
+              <label for="input-telegram-chat-id" class="mb-1">Telegram Chat ID:</label>
+              <input
+                id="input-telegram-chat-id"
+                name="input-telegram-chat-id"
+                class="form-control"
+                placeholder="12345678"
+                required
+              >
+            </div>
+
+            <!-- VAT Number -->
+            <div class="mb-3">
+              <label for="input-vat-number" class="mb-1">VAT Number:</label>
+              <input
+                id="input-vat-number"
+                name="input-vat-number"
+                class="form-control"
+                placeholder="XX12345678"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="modal-footer d-flex">
+            <img src="/assets/images/tail-spin.svg" class="htmx-indicator loader me-2" />
+
+            <button
+              id="button-close-new-vat-request-modal"
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+
+            <button
+              id="button-add-new-vat-request"
+              type="submit"
+              class="btn btn-primary"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast -->
-  <div class="position-fixed bottom-0 end-0 p-3">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="toast" class="toast">
       <div class="toast-header">
         <strong id="toast-header" class="me-auto"></strong>

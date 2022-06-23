@@ -9,3 +9,7 @@
 .htmx-request .loader {
   display: inline;
 }
+
+.toast-container {
+  z-index: 1090;
+}

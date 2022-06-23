@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express, { Response } from 'express';
+import express, { Request, RequestHandler, Response } from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import axios from 'axios';
@@ -8,7 +8,7 @@ import { VatRequest, VatRequestError } from './models';
 
 dotenv.config();
 
-const { PORT, ADMIN_API_URL, ADMIN_API_AUTH_CODE } = process.env;
+const { PORT, API_URL, ADMIN_API_URL, API_AUTH_CODE, ADMIN_API_AUTH_CODE } = process.env;
 const root = path.join(__dirname, 'www');
 
 const app = express();
@@ -22,50 +22,88 @@ app.set('views', path.join(__dirname, 'www', 'templates'));
 
 app.get('/vat-requests', async (_, res) => {
   await apiCall(async () => {
-    const result = await axios.get(getApiUrl('list'));
+    const result = await axios.get(getAdminApiUrl('list'));
     const vatRequests = <VatRequest[]>result.data;
     res.render('vat-requests', {
       vatRequests
     });
-    console.log('Successfully retrieved VAT Requests');
-  }, res, 'Failed to retrieve VAT Requests');
+  }, res, 'Retrieve VAT Requests');
 });
 
 app.get('/vat-request-errors', async (_, res) => {
   await apiCall(async () => {
-    const result = await axios.get(getApiUrl('listErrors'));
+    const result = await axios.get(getAdminApiUrl('listErrors'));
     const vatRequestErrors = <VatRequestError[]>result.data;
     res.render('vat-request-errors', {
       vatRequestErrors
     });
-    console.log('Successfully retrieved VAT Request Errors');
-  }, res, 'Failed to retrieve VAT Request Errors');
+  }, res, 'Retrieve VAT Request Errors');
 });
 
 app.post('/resolve-error', async (req, res) => {
   const errorId = req.query.errorId || req.body?.errorId;
-  const silent = req?.body['checkbox-silent'] === 'on';
+  const silent = req.body && req.body['checkbox-silent'] === 'on';
   if (!errorId) {
     res.status(400).send('Missing VAT Request Error Id');
     console.warn('Invalid request: missing VAT Request Error Id');
   } else {
     await apiCall(async () => {
-      await axios.post(getApiUrl('resolveError'), {
+      await axios.post(getAdminApiUrl('resolveError'), {
         errorId,
         silent
       });
       res.status(204).send();
-      console.log('Successfully resolved VAT Request Error');
-    }, res, 'Failed to resolve VAT Request Error');
+    }, res, 'Resolve VAT Request Error');
   }
 });
 
 app.post('/resolve-all-errors', async (_, res) => {
   await apiCall(async () => {
-    await axios.post(getApiUrl('resolveAllErrors'));
+    await axios.post(getAdminApiUrl('resolveAllErrors'));
     res.status(204).send();
-    console.log('Successfully resolved all VAT Request Errors');
-  }, res, 'Failed to resolve all VAT Request Errors');
+  }, res, 'Resolve all VAT Request Errors');
+});
+
+const validateTelegramChatId: RequestHandler = (req, res, next) => {
+  const telegramChatId = getTelegramChatId(req);
+  if (!telegramChatId) {
+    res.status(400).send('Missing Telegram Chat ID');
+    return;
+  }
+  next();
+};
+
+const validateVatNumber: RequestHandler = (req, res, next) => {
+  const vatNumber = getVatNumber(req);
+  if (!vatNumber) {
+    res.status(400).send('Missing VAT number');
+    return;
+  }
+  next();
+};
+
+app.post('/check', validateTelegramChatId, validateVatNumber, async (req, res) => {
+  const telegramChatId = getTelegramChatId(req);
+  const vatNumber = getVatNumber(req);
+  await apiCall(async () => {
+    const result = await axios.post(getApiUrl('check'), {
+      telegramChatId,
+      vatNumber
+    });
+    res.status(200).send(result.data);
+  }, res, `Register VAT number '${vatNumber}' for Telegram user '${telegramChatId}'`);
+});
+
+app.post('/uncheck', validateTelegramChatId, validateVatNumber, async (req, res) => {
+  const telegramChatId = getTelegramChatId(req);
+  const vatNumber = getVatNumber(req);
+  await apiCall(async () => {
+    const result = await axios.post(getApiUrl('uncheck'), {
+      telegramChatId,
+      vatNumber
+    });
+    res.status(200).send(result.data);
+  }, res, `Unregister VAT number '${vatNumber}' for Telegram user '${telegramChatId}'`);
 });
 
 const port = PORT || 80;
@@ -75,15 +113,34 @@ app.listen(port, () => {
   console.log(`Admin API location: ${ADMIN_API_URL}`);
 });
 
-function getApiUrl(action: 'list' | 'listErrors' | 'resolveError' | 'resolveAllErrors') {
+function getApiUrl(action: 'check' | 'uncheck' | 'list' | 'uncheckAll') {
+  return `${API_URL}/${action}?code=${API_AUTH_CODE}`;
+}
+
+function getAdminApiUrl(action: 'list' | 'listErrors' | 'resolveError' | 'resolveAllErrors') {
   return `${ADMIN_API_URL}/${action}?code=${ADMIN_API_AUTH_CODE}`;
 }
 
-async function apiCall(fn: () => Promise<void>, res: Response<any>, errorMessage: string) {
+async function apiCall(fn: () => Promise<void>, res: Response<any>, desc: string) {
   try {
+    console.log(`[START] ${desc}`);
     await fn();
+    console.log(`[SUCCESS] ${desc}`);
   } catch (error: any) {
-    console.error(`${errorMessage}\n`, error.message || error, error.response?.data);
+    const errorMessage = error.response?.data || error.message || JSON.stringify(error);
+    console.error(`[ERROR] ${desc}:`, errorMessage);
     res.status(error.response?.status || 500).send(errorMessage);
   }
+}
+
+function getTelegramChatId(req: Request): string | null {
+  return req.query.telegramChatId ||
+    req.body?.telegramChatId ||
+    (req.body ? req.body['input-telegram-chat-id'] : null);
+}
+
+function getVatNumber(req: Request): string | null {
+  return req.query.vatNumber ||
+    req.body?.vatNumber ||
+    (req.body ? req.body['input-vat-number'] : null);
 }

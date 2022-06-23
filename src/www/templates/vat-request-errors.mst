@@ -22,8 +22,8 @@
           hx-include="[name='checkbox-silent']"
           _="on click toggle @disabled until htmx:afterOnLoad end
              on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
-                then trigger showMessage(value:'Successfully resolved VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}') end
-             on htmx:responseError trigger showError(value:'Failed to resolve VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}, please check logs for details') end"
+                then trigger showMessage(value: 'Successfully resolved VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}') end
+             on htmx:responseError trigger showError(value: 'Failed to resolve VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}:\n\n' + detail.xhr.response) end"
         >
           Resolve
         </button>
