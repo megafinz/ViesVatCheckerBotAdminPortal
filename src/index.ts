@@ -41,8 +41,8 @@ app.get('/vat-request-errors', async (_, res) => {
 });
 
 app.post('/resolve-error', async (req, res) => {
-  const errorId = req.query.errorId || req.body?.errorId;
-  const silent = req.body && req.body['checkbox-silent'] === 'on';
+  const errorId = getErrorId(req);
+  const silent = getSilent(req);
   if (!errorId) {
     res.status(400).send('Missing VAT Request Error Id');
     console.warn('Invalid request: missing VAT Request Error Id');
@@ -57,9 +57,12 @@ app.post('/resolve-error', async (req, res) => {
   }
 });
 
-app.post('/resolve-all-errors', async (_, res) => {
+app.post('/resolve-all-errors', async (req, res) => {
+  const silent = getSilent(req);
   await apiCall(async () => {
-    await axios.post(getAdminApiUrl('resolveAllErrors'));
+    await axios.post(getAdminApiUrl('resolveAllErrors'), {
+      silent
+    });
     res.status(204).send();
   }, res, 'Resolve all VAT Request Errors');
 });
@@ -85,10 +88,12 @@ const validateVatNumber: RequestHandler = (req, res, next) => {
 app.post('/check', validateTelegramChatId, validateVatNumber, async (req, res) => {
   const telegramChatId = getTelegramChatId(req);
   const vatNumber = getVatNumber(req);
+  const silent = getSilent(req);
   await apiCall(async () => {
     const result = await axios.post(getApiUrl('check'), {
       telegramChatId,
-      vatNumber
+      vatNumber,
+      silent
     });
     res.status(200).send(result.data);
   }, res, `Register VAT number '${vatNumber}' for Telegram user '${telegramChatId}'`);
@@ -97,10 +102,12 @@ app.post('/check', validateTelegramChatId, validateVatNumber, async (req, res) =
 app.post('/uncheck', validateTelegramChatId, validateVatNumber, async (req, res) => {
   const telegramChatId = getTelegramChatId(req);
   const vatNumber = getVatNumber(req);
+  const silent = getSilent(req);
   await apiCall(async () => {
     const result = await axios.post(getApiUrl('uncheck'), {
       telegramChatId,
-      vatNumber
+      vatNumber,
+      silent
     });
     res.status(200).send(result.data);
   }, res, `Unregister VAT number '${vatNumber}' for Telegram user '${telegramChatId}'`);
@@ -143,4 +150,16 @@ function getVatNumber(req: Request): string | null {
   return req.query.vatNumber ||
     req.body?.vatNumber ||
     (req.body ? req.body['input-vat-number'] : null);
+}
+
+function getErrorId(req: Request): string | null {
+  return req.query.errorId ||
+    req.body?.errorId ||
+    (req.body ? req.body['input-error-id'] : null);
+}
+
+function getSilent(req: Request): boolean {
+  return req.query.silent === 'on' ||
+    req.body?.silent === 'on' ||
+    (req.body ? req.body['check-silent'] === 'on' : false);
 }

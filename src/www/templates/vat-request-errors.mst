@@ -11,20 +11,22 @@
 
   <tbody>
     {{#vatRequestErrors}}
-    <tr>
-      <td><input class="form-control-plaintext" type="text" value="{{vatRequest.telegramChatId}}" readonly></td>
-      <td><input class="form-control-plaintext" type="text" value="{{vatRequest.countryCode}}{{vatRequest.vatNumber}}" readonly></td>
-      <td><input class="form-control-plaintext text-truncate" type="text" value="{{error}}" data-bs-toggle="tooltip" title="{{error}}" readonly></td>
+    <tr data-testid="vat-request-error">
+      <td><input data-testid="input-telegram-chat-id" class="form-control-plaintext" type="text" value="{{vatRequest.telegramChatId}}" readonly></td>
+      <td><input data-testid="input-vat-number" class="form-control-plaintext" type="text" value="{{vatRequest.countryCode}}{{vatRequest.vatNumber}}" readonly></td>
+      <td><input data-testid="input-error" class="form-control-plaintext text-truncate" type="text" value="{{error}}" data-bs-toggle="tooltip" title="{{error}}" readonly></td>
       <td>
         <button
+          data-testid="button-resolve-error"
           class="btn btn-primary"
-          hx-post="/resolve-error?errorId={{id}}"
-          hx-include="[name='checkbox-silent']"
+          hx-post="/resolve-error"
+          hx-include="[name='check-silent'], .vat-request-error-{{id}}"
           _="on click toggle @disabled until htmx:afterOnLoad end
              on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
                 then trigger showMessage(value: 'Successfully resolved VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}') end
              on htmx:responseError trigger showError(value: 'Failed to resolve VAT Request Error for VAT Number {{vatRequest.countryCode}}{{vatRequest.vatNumber}}:\n\n' + detail.xhr.response) end"
         >
+          <input type="hidden" name="input-error-id" value="{{id}}" class="vat-request-error-{{id}}">
           Resolve
         </button>
       </td>
@@ -36,6 +38,6 @@
 
 {{^vatRequestErrors}}
 <div _="on load add @hidden to #button-resolve-all-errors">
-  <span class="text-muted">No VAT Request Errors</span>
+  <span data-testid="no-vat-request-errors" class="text-muted">No VAT Request Errors</span>
 </div>
 {{/vatRequestErrors}}

@@ -18,6 +18,7 @@
       <div class="d-flex flex-row">
         <!-- Add New VAT Request -->
         <button
+          data-testid="button-open-new-vat-request-modal"
           class="btn btn-primary"
           data-bs-toggle="modal"
           data-bs-target="#modal-add-new-vat-request"
@@ -32,12 +33,13 @@
           title="If checked, will not notify Telegram users about changes to their VAT Requests"
         >
           <input
-            id="checkbox-silent"
-            name="checkbox-silent"
+            data-testid="check-silent"
+            id="check-silent"
+            name="check-silent"
             class="form-check-input"
             type="checkbox"
           >
-          <label for="checkbox-silent" class="form-check-label">
+          <label for="check-silent" class="form-check-label">
             Silent
           </label>
         </div>
@@ -53,15 +55,17 @@
           hx-get="/vat-requests"
           hx-trigger="load, refresh"
           hx-target="#vat-request-list"
-          _="on htmx:responseError[detail.elt==me] remove @hidden from #error-loading-vat-requests"
+          _="on htmx:beforeRequest add @hidden to #vat-request-list
+             on htmx:responseError[detail.elt==me] remove @hidden from #error-loading-vat-requests
+             on htmx:afterOnLoad[detail.successful==true] remove @hidden from #vat-request-list"
         >
           <div class="card-header">
             <h2 class="py-2">VAT Requests</h2>
           </div>
 
           <div class="card-body">
-            <img src="/assets/images/tail-spin.svg" class="htmx-indicator loader" />
-            <div id="vat-request-list"></div>
+            <img data-testid="vat-request-list-loading-indicator" src="/assets/images/tail-spin.svg" class="htmx-indicator loader" />
+            <div data-testid="vat-request-list" id="vat-request-list"></div>
             <span hidden id="error-loading-vat-requests" class="text-danger">Can't load VAT requests</span>
           </div>
         </section>
@@ -75,8 +79,11 @@
           hx-get="/vat-request-errors"
           hx-trigger="load, refresh"
           hx-target="#vat-request-error-list"
-          _="on htmx:responseError[detail.elt==me] remove @hidden from #error-loading-vat-request-errors
-             on htmx:afterRequest call initializeTooltips(me)"
+          _="on htmx:beforeRequest add @hidden to #vat-request-error-list
+             on htmx:responseError[detail.elt==me] remove @hidden from #error-loading-vat-request-errors
+             on htmx:afterOnLoad[detail.successful==true]
+                remove @hidden from #vat-request-error-list then
+                call initializeTooltips(me)"
         >
           <div class="card-header">
             <div class="d-flex align-items-center py-2">
@@ -84,8 +91,10 @@
 
               <!-- Resolve All -->
               <button
+                data-testid="button-resolve-all-errors"
                 id="button-resolve-all-errors"
                 hx-post="/resolve-all-errors"
+                hx-include="[name='check-silent']"
                 class="btn btn-primary" hidden
                 _="on click toggle @disabled until htmx:afterOnLoad end
                    on htmx:afterOnLoad[detail.successful==true] trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
@@ -98,8 +107,8 @@
           </div>
 
           <div class="card-body">
-            <img src="/assets/images/tail-spin.svg" class="htmx-indicator loader" />
-            <div id="vat-request-error-list"></div>
+            <img data-testid="vat-request-error-list-loading-indicator" src="/assets/images/tail-spin.svg" class="htmx-indicator loader" />
+            <div data-testid="vat-request-error-list" id="vat-request-error-list"></div>
             <span hidden id="error-loading-vat-request-errors" class="text-danger">Can't load VAT request errors</span>
           </div>
         </section>
@@ -108,25 +117,37 @@
   </div>
 
   <!-- Modal: Add New VAT Request -->
-  <div id="modal-add-new-vat-request" class="modal fade" tabindex="-1">
+  <div
+    data-testid="modal-add-new-vat-request"
+    id="modal-add-new-vat-request"
+    class="modal fade"
+    tabindex="-1"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">New VAT Request</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            data-testid="button-close-new-vat-request-modal-1"
+            id="button-close-new-vat-request-modal-1"
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
 
         <form
           hx-post="/check"
+          hx-include="[name='check-silent']"
           hx-swap="none"
-          _="on htmx:beforeRequest toggle @disabled on [ #button-close-new-vat-request-modal, #button-add-new-vat-request ]
+          _="on htmx:beforeRequest toggle @disabled on [ #button-close-new-vat-request-modal-1, #button-close-new-vat-request-modal-2, #button-add-new-vat-request ]
              on htmx:afterOnLoad[detail.successful==true]
-                toggle @disabled on [ #button-close-new-vat-request-modal, #button-add-new-vat-request ] then
-                send click to #button-close-new-vat-request-modal then
+                toggle @disabled on [ #button-close-new-vat-request-modal-1, #button-close-new-vat-request-modal-2, #button-add-new-vat-request ] then
+                send click to #button-close-new-vat-request-modal-1 then
                 trigger showMessage(value: 'Successfully registered new VAT request') then
                 trigger refresh on the [ #vat-request-list-container, #vat-request-error-list-container ]
              on htmx:responseError
-                toggle @disabled on [ #button-close-new-vat-request-modal, #button-add-new-vat-request ] then
+                toggle @disabled on [ #button-close-new-vat-request-modal-1, #button-close-new-vat-request-modal-2, #button-add-new-vat-request ] then
                 trigger showError(value: 'Failed to register new VAT request:\n\n' + detail.xhr.response)"
         >
           <div class="modal-body">
@@ -134,6 +155,7 @@
             <div class="mb-3">
               <label for="input-telegram-chat-id" class="mb-1">Telegram Chat ID:</label>
               <input
+                data-testid="input-telegram-chat-id"
                 id="input-telegram-chat-id"
                 name="input-telegram-chat-id"
                 class="form-control"
@@ -146,6 +168,7 @@
             <div class="mb-3">
               <label for="input-vat-number" class="mb-1">VAT Number:</label>
               <input
+                data-testid="input-vat-number"
                 id="input-vat-number"
                 name="input-vat-number"
                 class="form-control"
@@ -159,7 +182,8 @@
             <img src="/assets/images/tail-spin.svg" class="htmx-indicator loader me-2" />
 
             <button
-              id="button-close-new-vat-request-modal"
+              data-testid="button-close-new-vat-request-modal-2"
+              id="button-close-new-vat-request-modal-2"
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
@@ -168,6 +192,7 @@
             </button>
 
             <button
+              data-testid="button-add-new-vat-request"
               id="button-add-new-vat-request"
               type="submit"
               class="btn btn-primary"
@@ -189,7 +214,7 @@
       </div>
 
       <div class="toast-body">
-        <span id="toast-message"></span>
+        <span data-testid="toast-message" id="toast-message"></span>
       </div>
     </div>
   </div>

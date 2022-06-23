@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon src/index.ts",
+    "start": "npx nodemon --watch .env --watch src src/index.ts",
     "build": "npm run clean && tsc -p . && npm run copy-files",
     "clean": "rm -rf dist",
     "copy-files": "cp -r src/www ./dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cypress:open": "npx cypress open"
   },
   "author": "megafinz",
   "license": "ISC",
@@ -23,8 +23,10 @@
     "@types/mustache-express": "^1.2.2",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
+    "cypress": "^10.2.0",
     "eslint": "^8.18.0",
     "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.3",
     "eslint-plugin-promise": "^6.0.0",
