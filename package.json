@@ -31,7 +31,7 @@
     "eslint-plugin-n": "^15.2.3",
     "eslint-plugin-promise": "^6.0.0",
     "nodemon": "^2.0.16",
-    "ts-node": "^10.8.0"
+    "ts-node": "^10.9.1"
   },
   "nodemonConfig": {
     "ext": "html,css,mst,ts"
