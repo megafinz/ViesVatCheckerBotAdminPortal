@@ -30,7 +30,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.3",
     "eslint-plugin-promise": "^6.0.0",
-    "nodemon": "^2.0.16",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1"
   },
   "nodemonConfig": {
