@@ -29,7 +29,7 @@
     "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.2.3",
-    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-promise": "^6.1.1",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1"
   },
