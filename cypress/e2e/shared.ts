@@ -1,22 +1,32 @@
 const E2E_API_URL = Cypress.env('E2E_API_URL');
 
-export const noVatRequests = () => cy.get('[data-testid=\'no-vat-requests\']');
-export const noVatRequestErrors = () => cy.get('[data-testid=\'no-vat-request-errors\']');
-export const vatRequestList = () => cy.get('[data-testid=\'vat-request-list\']');
-export const vatRequestErrorList = () => cy.get('[data-testid=\'vat-request-error-list\']');
-export const vatRequests = () => vatRequestList().find('[data-testid=\'vat-request\']');
-export const buttonRemove = () => cy.get('[data-testid=\'button-uncheck-vat-request\']');
-export const vatRequestErrors = () => vatRequestErrorList().find('[data-testid=\'vat-request-error\']');
-export const buttonResolveAllErrors = () => cy.get('[data-testid=\'button-resolve-all-errors\']');
-export const buttonResolveError = () => cy.get('[data-testid=\'button-resolve-error\']');
-export const buttonOpenModal = () => cy.get('[data-testid=\'button-open-new-vat-request-modal\']');
-export const modal = () => cy.get('[data-testid=\'modal-add-new-vat-request\']');
-export const buttonAddNewVatRequest = () => cy.get('[data-testid=\'button-add-new-vat-request\']');
-export const inputTelegramChatId = () => cy.get('[data-testid=\'input-telegram-chat-id\']');
-export const inputVatNumber = () => cy.get('[data-testid=\'input-vat-number\']');
-export const inputError = () => cy.get('[data-testid=\'input-error\']');
-export const checkSilent = () => cy.get('[data-testid=\'check-silent\']');
-export const toast = () => cy.get('[data-testid=\'toast-message\']');
+export const noVatRequests = () => cy.get("[data-testid='no-vat-requests']");
+export const noVatRequestErrors = () =>
+  cy.get("[data-testid='no-vat-request-errors']");
+export const vatRequestList = () => cy.get("[data-testid='vat-request-list']");
+export const vatRequestErrorList = () =>
+  cy.get("[data-testid='vat-request-error-list']");
+export const vatRequests = () =>
+  vatRequestList().find("[data-testid='vat-request']");
+export const buttonRemove = () =>
+  cy.get("[data-testid='button-uncheck-vat-request']");
+export const vatRequestErrors = () =>
+  vatRequestErrorList().find("[data-testid='vat-request-error']");
+export const buttonResolveAllErrors = () =>
+  cy.get("[data-testid='button-resolve-all-errors']");
+export const buttonResolveError = () =>
+  cy.get("[data-testid='button-resolve-error']");
+export const buttonOpenModal = () =>
+  cy.get("[data-testid='button-open-new-vat-request-modal']");
+export const modal = () => cy.get("[data-testid='modal-add-new-vat-request']");
+export const buttonAddNewVatRequest = () =>
+  cy.get("[data-testid='button-add-new-vat-request']");
+export const inputTelegramChatId = () =>
+  cy.get("[data-testid='input-telegram-chat-id']");
+export const inputVatNumber = () => cy.get("[data-testid='input-vat-number']");
+export const inputError = () => cy.get("[data-testid='input-error']");
+export const checkSilent = () => cy.get("[data-testid='check-silent']");
+export const toast = () => cy.get("[data-testid='toast-message']");
 
 export function interceptListRequests() {
   cy.intercept({
@@ -72,11 +82,12 @@ export const waitForListRequests = () => {
 };
 export const waitForCheckRequest = () => cy.wait('@check');
 export const waitForUncheckRequest = () => cy.wait('@uncheck');
-export const waitForResolveAllErrorsRequest = () => cy.wait('@resolveAllErrors');
+export const waitForResolveAllErrorsRequest = () =>
+  cy.wait('@resolveAllErrors');
 export const waitForResolveErrorRequest = () => cy.wait('@resolveError');
 
 export function checkVatRequest(telegramChatId: string, vatNumber: string) {
-  modal().then(m => {
+  modal().then((m) => {
     if (!m.hasClass('show')) {
       buttonOpenModal().click();
     }
@@ -94,7 +105,11 @@ export function checkVatRequest(telegramChatId: string, vatNumber: string) {
   });
 }
 
-export function demoteVatRequest(telegramChatId: string, vatNumber: string, errorMessage?: string) {
+export function demoteVatRequest(
+  telegramChatId: string,
+  vatNumber: string,
+  errorMessage?: string
+) {
   cy.request('POST', `${E2E_API_URL}/demote`, {
     telegramChatId,
     vatNumber,
@@ -121,7 +136,7 @@ export function reset() {
 }
 
 export function refresh() {
-  cy.window().then(w => {
+  cy.window().then((w) => {
     const htmx: any = w['htmx' as any];
     htmx.trigger('#vat-request-list', 'refresh');
     htmx.trigger('#vat-request-error-list', 'refresh');

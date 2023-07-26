@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon --watch .env --watch src src/index.ts",
-    "build": "npm run clean && tsc -p . && npm run copy-files",
+    "start": "nodemon --watch .env --watch src src/index.ts",
+    "build": "yarn clean && tsc -p . && yarn copy-files",
     "clean": "rm -rf dist",
     "copy-files": "cp -r src/www ./dist",
-    "cypress:open": "npx cypress open"
+    "cypress:open": "npx cypress open",
+    "format": "prettier --write .",
+    "prepare": "husky install"
   },
   "author": "megafinz",
   "license": "ISC",
@@ -25,15 +27,23 @@
     "@typescript-eslint/parser": "^6.2.0",
     "cypress": "^12.17.2",
     "eslint": "^8.45.0",
+    "eslint-config-prettier": "8.8.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
+    "husky": "8.0.3",
+    "lint-staged": "13.2.3",
     "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1"
+    "prettier": "3.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "5.1.6"
   },
   "nodemonConfig": {
     "ext": "html,css,mst,ts"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }

@@ -5,6 +5,7 @@ This is a simple web application that is intended to be an admin helper tool for
 # What Does It Do?
 
 It can display two lists:
+
 - VAT numbers that are registered for monitoring.
 - VAT numbers that failed to be validated in VIES for some reason. You can mark the the errors as resolved once you're sure that those VAT numbers can be validated again.
 
