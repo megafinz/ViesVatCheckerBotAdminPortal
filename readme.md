@@ -29,7 +29,7 @@ It can display two lists:
 
 1. Run the [backend](https://github.com/megafinz/ViesVatCheckerBot) in E2E mode.
 2. Update `.env` file: set `E2E_API_URL` to point to your backend's `/e2e` endpoint address (e.g. `http://localhost:7071/e2e`).
-3. Start the app as usual: `npm start`.
-4. Run [cypress](https://www.cypress.io) via `npm run cypress:open`.
+3. Start the app as usual: `yarn start`.
+4. Run [cypress](https://www.cypress.io) via `yarn cypress:open`.
 5. Click on "E2E Testing", then choose a browser.
 6. Run tests.
