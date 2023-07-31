@@ -1,10 +1,9 @@
 node_modules/
-dist/
 readme.md
 LICENSE
 Dockerfile
-*.sh
 .git/
-.gitignore
-.env
+.next/
+.env.*
+npm-debug.log
 .dockerignore

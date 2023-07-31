@@ -1,8 +1,7 @@
 services:
-  vies-vat-checker-admin-portal:
+  admin-portal:
     build: .
     ports:
-      - "${PORT}:80"
-    environment:
-      - ADMIN_API_URL=${ADMIN_API_URL}
-      - ADMIN_API_AUTH_CODE=${ADMIN_API_AUTH_CODE}
+      - "3000:3000"
+    env_file:
+      - .env.local
