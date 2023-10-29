@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "doppler run -- next dev",
+    "build": "doppler run -- next build",
+    "build:ci": "next build",
+    "start": "doppler run -- next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -23,9 +24,9 @@
     "clsx": "2.0.0",
     "date-fns": "2.30.0",
     "eslint": "8.51.0",
-    "eslint-config-next": "13.4.19",
+    "eslint-config-next": "14.0.0",
     "lucide-react": "0.276.0",
-    "next": "13.5.0",
+    "next": "14.0.0",
     "postcss": "8.4.31",
     "react": "18.2.0",
     "react-dom": "18.2.0",
