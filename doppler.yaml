@@ -1,0 +1,3 @@
+setup:
+  project: vies-vat-checker--admin-portal
+  config: dev
