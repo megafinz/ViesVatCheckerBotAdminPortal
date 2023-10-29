@@ -1,7 +1,19 @@
+version: "3"
+
+x-cfg: &cfg
+  API_URL: ${API_URL}
+  API_AUTH_CODE: ${API_AUTH_CODE}
+  ADMIN_API_URL: ${ADMIN_API_URL}
+  ADMIN_API_AUTH_CODE: ${ADMIN_API_AUTH_CODE}
+  TG_ADMIN_CHAT_ID: ${TG_ADMIN_CHAT_ID}
+
 services:
   admin-portal:
-    build: .
+    build:
+      context: .
+      args:
+        <<: *cfg
     ports:
       - "3000:3000"
-    env_file:
-      - .env.local
+    environment:
+      <<: *cfg

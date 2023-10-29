@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "doppler run -- next dev",
-    "build": "doppler run -- next build",
-    "build:ci": "next build",
-    "start": "doppler run -- next start",
-    "lint": "next lint"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "docker:up": "docker-compose --env-file .env.local up --build"
   },
   "dependencies": {
     "@hookform/resolvers": "3.3.2",
