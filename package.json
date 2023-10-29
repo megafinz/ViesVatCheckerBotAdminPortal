@@ -35,5 +35,8 @@
     "tailwindcss-animate": "1.0.7",
     "typescript": "5.1.6",
     "zod": "3.22.3"
+  },
+  "engines": {
+    "node": ">=20.0.0 && <21.0.0"
   }
 }
