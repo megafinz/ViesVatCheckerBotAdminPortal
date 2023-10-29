@@ -17,6 +17,8 @@ import { TelegramChatId } from "../(components)/TelegramChatId";
 import { RemoveVatRequestError } from "./(components)/RemoveVatRequestError";
 import { ResolveVatRequestError } from "./(components)/ResolveVatRequestError";
 
+export const dynamic = "force-dynamic";
+
 export default async function VatRequestErrorList() {
   const url = getAdminApiUrl("listErrors");
   const response = await fetch(url);

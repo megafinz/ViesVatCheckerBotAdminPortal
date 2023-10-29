@@ -15,6 +15,8 @@ import { AddVatRequest } from "./(components)/AddVatRequest";
 import { EditVatRequest } from "./(components)/EditVatRequest";
 import { RemoveVatRequest } from "./(components)/RemoveVatRequest";
 
+export const dynamic = "force-dynamic";
+
 // TODO: paging.
 export default async function VatRequestList() {
   const url = getAdminApiUrl("list");
