@@ -1,4 +1,4 @@
-#syntax=docker/dockerfile:1.4
+#syntax=docker/dockerfile:1.28
 FROM node:20-slim AS base
 
 # Install dependencies only when needed
